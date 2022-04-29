@@ -7,10 +7,7 @@ const port = process.env.PORT || 5000;
 //middleware
 app.use(cors());
 app.use(express.json());
-
-//dbuser5
-//sE9MSxpOlIxMPp4z
-
+//mongodb
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.tfb5c.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
@@ -21,11 +18,24 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect();
-    const useProduct=client.db('electronics').collection('product')
+    const useProduct = client.db("electronics").collection("product");
 
-    app.get('/product',(req,res)=>{
-        res.send('connected mongo')
-    })
+    //product uploaded
+    app.post("/uploadPd", async (req, res) => {
+      const product = req.body;
+      const products = await useProduct.insertOne(product);
+      res.send(product);
+    });
+    //product get
+    app.get("/product", async (req, res) => {
+      const products = await useProduct.find({}).toArray();
+      res.send(products);
+    });
+    app.delete("/product", async (req, res) => {
+      id = req.body;
+      const products = await useProduct.deleteOne(id);
+      res.send(products);
+    });
   } finally {
     //   await client.close();
   }
