@@ -18,12 +18,19 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
-client.connect((err) => {
-  const collection = client.db("test").collection("devices");
-  console.log("connected");
-  client.close();
-});
+async function run() {
+  try {
+    await client.connect();
+    const useProduct=client.db('electronics').collection('product')
 
+    app.get('/product',(req,res)=>{
+        res.send('connected mongo')
+    })
+  } finally {
+    //   await client.close();
+  }
+}
+run().catch(console.dir);
 app.get("/", (req, res) => {
   res.send("Server Is Running");
 });
