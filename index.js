@@ -50,6 +50,7 @@ async function run() {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const products = await useProduct.deleteOne(query);
+      console.log(products);
       res.send(products);
     });
 
