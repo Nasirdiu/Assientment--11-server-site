@@ -4,6 +4,7 @@ const cors = require("cors");
 require("dotenv").config();
 const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const jwt = require("jsonwebtoken");
 //middleware
 app.use(cors());
 app.use(express.json());
@@ -20,6 +21,13 @@ async function run() {
     await client.connect();
     const useProduct = client.db("electronics").collection("product");
 
+    //jwt
+    app.post("/product", async (req, res) => {
+      const email = req.body;
+      const token = jwt.sign(email, process.env.ACCESS_TOKEN_SECRET);
+      console.log(token);
+      res.send({ token });
+    });
     //product uploaded
     app.post("/uploadPd", async (req, res) => {
       const product = req.body;
@@ -37,6 +45,7 @@ async function run() {
       const result = await useProduct.findOne(querry);
       res.send(result);
     });
+    //delete
     app.delete("/product/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
